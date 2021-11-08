@@ -8,7 +8,7 @@ const { Tag, Product, ProductTag } = require('../../models');
 router.get('/', (req, res) => {
   // find all tags
   Tag.findAll()
-  .then(tag => res.json(Product, Category, Tag))
+  .then(tag => res.json(tag))
   .catch(err => {
     console.log(err);
     res.status(500).json(err);
@@ -62,7 +62,7 @@ router.post('/', (req, res) => {
       // if no tags, just respond
       res.status(200).json(tag);
     })
-    .then((tagTagIds) => res.status(200).json(tagTagIds))
+    // .then((tagTagIds) => res.status(200).json(tagTagIds))
     .catch((err) => {
       console.log(err);
       res.status(400).json(err);

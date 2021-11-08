@@ -1,12 +1,12 @@
 const router = require('express').Router();
-const { Category, Product } = require('../../models');
+const { Category, Product, Tag } = require('../../models');
 
 // The `/api/categories` endpoint
 
 router.get('/', (req, res) => {
   // find all categories
   Category.findAll()
-  .then(category => res.json(Product, Category, Tag))
+  .then(category => res.json(category))
   .catch(err => {
     console.log(err);
     res.status(500).json(err);
@@ -21,12 +21,12 @@ router.get('/:id', (req, res) => {
       id: req.params.id
     }
   })
-  .then(Category => {
-    if (!Category) {
+  .then(category => {
+    if (!category) {
       res.status(404).json({ message: 'No category found with this id' });
       return;
     }
-    res.json(Category);
+    res.json(category);
   })
   .catch(err => {
     console.log(err);
@@ -38,18 +38,18 @@ router.post('/', (req, res) => {
   // create a new category
   Category.create(req.body)
   .then((category) => {
-    if (req.body.catIds.length) {
-      const catTagIdArr = req.body.tagIds.map((category_id) => {
-        return {
-          category_id: category.id,
-          category_id,
-        };
-      });
-      return CategoryTag.bulkCreate(catTagIdArr);
-    }
+    // if (req.body.catIds.length) {
+    //   const catTagIdArr = req.body.tagIds.map((category_id) => {
+    //     return {
+    //       category_id: category.id,
+    //       category_id,
+    //     };
+    //   });
+    //   return CategoryTag.bulkCreate(catTagIdArr);
+    // }
     res.status(200).json(category);
   })
-  .then((catTagIds) => res.status(200).json(catTagIds))
+  // .then((catTagIds) => res.status(200).json(catTagIds))
   .catch((err) => {
     console.log(err);
     res.status(400).json(err);
@@ -68,7 +68,7 @@ router.put('/:id', (req, res) => {
       return CategoryTag.findAll({ where: { category_id: req.params.id } });
     })
     .then((categoryTags) => {
-      const categoryTagIds = categoryTags.map(({ category_id}) => category_id);
+      const categoryTagIds = categoryTags.map(({ category_id}) => category_id)
       .filter((category_id) => !categoryTagIds.include(category_id))
       .map((category_id) => {
         return {
